@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAILYFIX AI</title>
+<style>
+:root {
+  --bg: #0c1020;
+  --panel: #171e32;
+  --accent: #b5a6ff;
+  --text: #f7f7ff;
+  --muted: #b7c1d8;
+  --border: #343e59;
+  --input-bg: #101729;
+  --button-secondary: #27324b;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 16px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-top: 26px;
+  }
+
+  .panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  header {
+    flex-wrap: wrap;
+  }
+}
+
+main {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+header { display: flex; justify-content: space-between;
+  align-items: center; gap: 12px; }
+.logo { font-size: 23px; font-weight: 800; }
+.logo span { color: var(--accent); }
+
+select, textarea, button {
+  font: inherit;
+  border-radius: 14px;
+  padding: 13px;
+  transition: border-color 0.2s ease, 
+              background-color 0.2s ease,
+              transform 0.2s ease;
+}
+
+select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  max-width: 125px;
+  min-height: 46px;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  outline: none;
+}
+
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+h1 { font-size: 32px; margin: 35px 0 10px; }
+p { color: var(--muted); line-height: 1.6; }
+
+.panel {
+  background: var(--panel);
+  padding: 20px;
+  border: 1px solid rgba(181, 166, 255, 0.12);
+  border-radius: 20px;
+  margin-top: 20px;
+  box-shadow: var(--shadow);
+}
+
+textarea {
+  display: block; width: 100%; min-height: 120px;
+  resize: vertical; background: #111827;
+  color: white; border: 1px solid #414a60;
+}
+button {
+  border: 0; cursor: pointer; font-weight: bold;
+}
+
+.primary {
+  width: 100%;
+  margin-top: 12px;
+  background: var(--accent);
+  color: #171329;
+  min-height: 48px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(181, 166, 255, 0.16);
+}
+
+.primary:active {
+  transform: scale(0.98);
+}
+
+.examples { display: flex; flex-wrap: wrap; gap: 8px; }
+.examples button {
+  background: var(--button-secondary);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  min-height: 44px;
+  padding: 10px 14px;
+}
+
+.examples button:active {
+  transform: scale(0.97);
+  border-color: var(--accent);
+}
+
+#answer {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  font-size: 15px;
+  color: var(--text);
+  margin-top: 12px;
+}
+
+#result h2 {
+  color: var(--accent);
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+footer { margin: 25px 0; font-size: 12px; color: var(--muted); }
+[dir="rtl"] header { flex-direction: row-reverse; }
+[dir="rtl"] textarea, [dir="rtl"] #answer { text-align: right; }
+  
+#historyList {
+  padding-left: 20px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+#historyList li {
+  margin: 10px 0;
+  padding: 12px;
+  overflow-wrap: anywhere;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  line-height: 1.6;
+  transition: background-color 0.2s ease,
+              border-color 0.2s ease;
+}
+
+#historyList li:hover {
+  background: var(--button-secondary);
+  border-color: var(--accent);
+}
+
+#clearHistory {
+  background: var(--button-secondary);
+  color: var(--text);
+  border: 1px solid var(--border);
+  min-height: 44px;
+}
+
+#clearHistory:active {
+  transform: scale(0.97);
+  border-color: var(--accent);
+}
+  
+#historyList:empty {
+  display: none;
+}
+
+/* Weekly plan styling */
+#weeklyPlanList {
+  padding-left: 8px;
+  list-style: none;
+}
+
+#weeklyPlanList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+#weeklyPlanList input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+#weeklyProgress {
+  padding: 12px;
+  background: var(--button-secondary);
+  border-radius: 12px;
+  text-align: center;
+  font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-top: 26px;
+  }
+
+  .panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  header {
+    flex-wrap: wrap;
+  }
+}
+
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo">DAILYFIX <span>AI</span></div>
+    <select id="language" aria-label="Language">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="ar">العربية</option>
+    </select>
+  </header>
+
+  <h1 id="heading">Solve your everyday problems.</h1>
+  <p id="intro">Describe your problem. Get a simple plan to move forward.</p>
+
+  <section class="panel">
+    <label id="questionLabel" for="problem">What do you need help with?</label>
+    <textarea id="problem" placeholder="For example: Help me organize my day."></textarea>
+    <button class="primary" id="solve" type="button">Find a solution →</button>
+  </section>
+
+  <section class="panel">
+    <strong id="examplesTitle">Try an example</strong>
+    <div class="examples" style="margin-top:12px">
+      <button type="button" data-example="time">⏰ <span id="exTime">Time management</span></button>
+      <button type="button" data-example="money">💰 <span id="exMoney">Saving money</span></button>
+      <button type="button" data-example="study">📚 <span id="exStudy">Studying</span></button>
+    </div>
+  </section>
+
+  <section class="panel" id="result" hidden aria-live="polite">
+    <strong id="answerTitle">Your action plan</strong>
+    <p id="answer"></p>
+  </section>
+  
+<section class="panel" id="discoverPanel">
+  <h2 id="discoverTitle">Discover New Opportunities</h2>
+  <p id="discoverIntro">
+    Find new skills, career paths and project ideas that fit your life.
+  </p>
+
+  <label id="goalLabel" for="discoverGoal">What would you like to explore?</label>
+  <select id="discoverGoal" style="display:block;width:100%;max-width:none;margin-top:8px">
+    <option value="skills">Learn a new skill</option>
+    <option value="business">Explore a business idea</option>
+    <option value="career">Improve my career</option>
+    <option value="personal">Develop myself</option>
+  </select>
+
+  <label id="timeLabel" for="discoverTime" style="display:block;margin-top:16px">
+    How much time do you have daily?
+  </label>
+  <select id="discoverTime" style="display:block;width:100%;max-width:none;margin-top:8px">
+    <option value="15">15 minutes</option>
+    <option value="30">30 minutes</option>
+    <option value="60">1 hour</option>
+    <option value="120">2 hours or more</option>
+  </select>
+
+  <label id="budgetLabel" for="discoverBudget" style="display:block;margin-top:16px">
+    What is your available budget?
+  </label>
+  <select id="discoverBudget" style="display:block;width:100%;max-width:none;margin-top:8px">
+    <option value="zero">No budget</option>
+    <option value="low">Small budget</option>
+    <option value="flexible">Flexible budget</option>
+  </select>
+  
+<label id="levelLabel" for="discoverLevel" style="display:block;margin-top:16px">
+  What is your current level?
+</label>
+<select id="discoverLevel" style="display:block;width:100%;max-width:none;margin-top:8px">
+  <option value="beginner">Beginner</option>
+  <option value="intermediate">Intermediate</option>
+  <option value="advanced">Advanced</option>
+</select>
+
+  <button class="primary" id="discoverButton" type="button">
+    Discover my options →
+  </button>
+
+  <div id="discoverResult" hidden aria-live="polite" style="margin-top:18px">
+    <strong id="discoverResultTitle">Your opportunities</strong>
+    <p id="discoverAnswer"></p>
+  </div>
+</section>
+<section class="panel" id="weeklyPlanPanel">
+  <h2 id="weeklyPlanTitle">Your 7-Day Action Plan</h2>
+  <p id="weeklyPlanIntro">
+    Turn your idea into simple daily actions.
+  </p>
+  <button class="primary" id="createWeeklyPlan" type="button">
+    Create my 7-day plan
+  </button>
+  <div id="weeklyPlanResult" hidden>
+    <h3 id="weeklyPlanResultTitle">Your weekly plan</h3>
+    <ul id="weeklyPlanList"></ul>
+    <p id="weeklyProgress">Progress: 0/7 tasks completed</p>
+    <button class="primary" id="saveWeeklyPlan" type="button">
+  Save my plan
+    </button>
+    <button class="primary" id="deleteWeeklyPlan" type="button">
+  Delete saved plan
+    </button>
+    <button class="primary" id="clearWeeklyPlanView" type="button">
+  Clear plan from screen
+    </button>
+  </div>
+</section>
+<section class="panel" id="historyPanel">
+  <strong id="historyTitle">Recent problems</strong>
+  <ul id="historyList"></ul>
+  <button id="clearHistory" type="button">
+    Clear history
+  </button>
+</section>
+  
+  <footer id="disclaimer">
+    Starter version: answers use simple built-in rules, not a live AI model.
+  </footer>
+</main>
+
+<script>
+const translations = {
+  en: {
+    heading: "Solve your everyday problems.",
+    intro: "Describe your problem. Get a simple plan to move forward.",
+    label: "What do you need help with?",
+    placeholder: "For example: Help me organize my day.",
+    solve: "Find a solution →", examples: "Try an example",
+    time: "Time management", money: "Saving money", study: "Studying",
+    answerTitle: "Your action plan",
+    disclaimer: "Starter version: answers use simple built-in rules, not a live AI model.",
+    empty: "Please describe your problem first.",
+    timeAnswer: "1. Write down your three most important tasks.\n2. Give each task a time slot.\n3. Start with the easiest task and review your progress tonight.",
+    moneyAnswer: "1. Write down your income and expenses.\n2. Identify one non-essential expense to reduce.\n3. Set a realistic weekly savings target.",
+    studyAnswer: "1. Choose one small topic.\n2. Study for 25 minutes without distractions.\n3. Take a 5-minute break, then test what you remember.",
+    general: "1. Describe the problem in one sentence.\n2. Identify one thing you can control.\n3. Choose a small action you can take today.\n4. Review the result and decide your next step."
+  },
+  fr: {
+    heading: "Résolvez vos problèmes quotidiens.",
+    intro: "Décrivez votre problème et obtenez un plan simple.",
+    label: "De quoi avez-vous besoin ?",
+    placeholder: "Exemple : Aidez-moi à organiser ma journée.",
+    solve: "Trouver une solution →", examples: "Essayez un exemple",
+    time: "Gestion du temps", money: "Économiser", study: "Études",
+    answerTitle: "Votre plan d'action",
+    disclaimer: "Version de départ : réponses prédéfinies, sans modèle d'IA connecté.",
+    empty: "Veuillez d'abord décrire votre problème.",
+    timeAnswer: "1. Notez vos trois tâches prioritaires.\n2. Attribuez un créneau à chacune.\n3. Commencez par la plus facile et faites le point ce soir.",
+    moneyAnswer: "1. Notez vos revenus et vos dépenses.\n2. Réduisez une dépense non essentielle.\n3. Fixez un objectif d'épargne hebdomadaire réaliste.",
+    studyAnswer: "1. Choisissez un petit sujet.\n2. Étudiez 25 minutes sans distraction.\n3. Faites une pause de 5 minutes, puis testez votre mémoire.",
+    general: "1. Décrivez le problème en une phrase.\n2. Identifiez ce que vous pouvez contrôler.\n3. Choisissez une petite action à faire aujourd'hui.\n4. Évaluez le résultat et décidez de la suite."
+  },
+  ar: {
+    heading: "حل مشكلاتك اليومية.",
+    intro: "اشرح مشكلتك واحصل على خطة بسيطة للتقدم.",
+    label: "ما الذي تحتاج إلى مساعدة فيه؟",
+    placeholder: "مثال: ساعدني في تنظيم يومي.",
+    solve: "ابحث عن حل ←", examples: "جرّب مثالاً",
+    time: "إدارة الوقت", money: "توفير المال", study: "الدراسة",
+    answerTitle: "خطة العمل الخاصة بك",
+    disclaimer: "نسخة أولية: تستخدم إجابات مبرمجة مسبقاً وليست متصلة بنموذج ذكاء اصطناعي.",
+    empty: "يرجى وصف مشكلتك أولاً.",
+    timeAnswer: "١. اكتب أهم ثلاث مهام لديك.\n٢. خصص وقتاً لكل مهمة.\n٣. ابدأ بالمهمة الأسهل وراجع تقدمك مساءً.",
+    moneyAnswer: "١. سجّل دخلك ومصروفاتك.\n٢. قلّل مصروفاً غير ضروري.\n٣. حدّد هدفاً واقعياً للادخار أسبوعياً.",
+    studyAnswer: "١. اختر موضوعاً صغيراً.\n٢. ادرس لمدة ٢٥ دقيقة دون مشتتات.\n٣. استرح ٥ دقائق ثم اختبر ما تتذكره.",
+    general: "١. لخّص المشكلة في جملة واحدة.\n٢. حدّد ما يمكنك التحكم فيه.\n٣. اختر خطوة صغيرة تنفذها اليوم.\n٤. راجع النتيجة وحدّد خطوتك التالية."
+  }
+};
+
+const $ = id => document.getElementById(id);
+let currentLanguage = localStorage.getItem("dailyfixLanguage") || "en";
+const HISTORY_KEY = "dailyfix_history";
+
+function getHistory() {
+  try {
+    const items = JSON.parse(
+      localStorage.getItem(HISTORY_KEY) || "[]"
+    );
+    return Array.isArray(items)
+      ? items.filter(x => typeof x === "string")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(problem) {
+  const items = getHistory();
+  const updated = [
+    problem,
+    ...items.filter(x => x !== problem)
+  ].slice(0, 5);
+
+  try {
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(updated)
+    );
+    renderHistory();
+  } catch {
+    // The app can still work if storage is unavailable.
+  }
+}
+
+function renderHistory() {
+  const list = document.getElementById("historyList");
+  if (!list) return;
+
+  list.replaceChildren();
+
+  getHistory().forEach(problem => {
+    const item = document.createElement("li");
+    item.textContent = problem;
+    item.style.cursor = "pointer";
+    item.title = "Click to use this problem again";
+
+    item.addEventListener("click", () => {
+      const problemInput =
+  document.getElementById("problem");
+
+      if (problemInput) {
+  problemInput.value = problem;
+  problemInput.focus();
+  solveProblem();
+}
+    });
+
+    list.appendChild(item);
+  });
+}
+  
+document.getElementById("clearHistory")
+  .addEventListener("click", () => {
+    try {
+      localStorage.removeItem(HISTORY_KEY);
+    } catch {}
+    renderHistory();
+  });
+
+renderHistory();
+function setLanguage(lang) {
+  currentLanguage = lang;
+  localStorage.setItem("dailyfixLanguage", lang);
+  const t = translations[lang];
+  $("language").value = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  $("heading").textContent = t.heading;
+  $("intro").textContent = t.intro;
+  $("questionLabel").textContent = t.label;
+  $("problem").placeholder = t.placeholder;
+  $("solve").textContent = t.solve;
+  $("examplesTitle").textContent = t.examples;
+  $("exTime").textContent = t.time;
+  $("exMoney").textContent = t.money;
+  $("exStudy").textContent = t.study;
+  $("answerTitle").textContent = t.answerTitle;
+  $("disclaimer").textContent = t.disclaimer;
+  
+  const discoverTranslations = {
+    en: {
+      title: "Discover New Opportunities",
+      intro: "Find new skills, career paths and project ideas that fit your life.",
+      goal: "What would you like to explore?",
+      goals: ["Learn a new skill", "Explore a business idea", "Improve my career", "Develop myself"],
+      time: "How much time do you have daily?",
+      times: ["15 minutes", "30 minutes", "1 hour", "2 hours or more"],
+      budget: "What is your available budget?",
+      budgets: ["No budget", "Small budget", "Flexible budget"],
+      level: "What is your current level?",
+      levels: ["Beginner", "Intermediate", "Advanced"],
+      button: "Discover my options →",
+      weeklyTitle: "Your 7-Day Action Plan",
+      weeklyIntro: "Turn your idea into simple daily actions.",
+      weeklyButton: "Create my 7-day plan",
+      weeklyResult: "Your weekly plan"
+    },
+    
+    fr: {
+      title: "Découvrez de nouvelles possibilités",
+      intro: "Découvrez des compétences, des carrières et des idées de projets adaptées à votre vie.",
+      goal: "Que souhaitez-vous explorer ?",
+      goals: ["Apprendre une compétence", "Explorer une idée de projet", "Améliorer ma carrière", "Me développer personnellement"],
+      time: "Combien de temps avez-vous par jour ?",
+      times: ["15 minutes", "30 minutes", "1 heure", "2 heures ou plus"],
+      budget: "Quel est votre budget disponible ?",
+      budgets: ["Aucun budget", "Petit budget", "Budget flexible"],
+      level: "Quel est votre niveau actuel ?",
+      levels: ["Débutant", "Intermédiaire", "Avancé"],
+      button: "Découvrir mes possibilités →",
+      weeklyTitle: "Votre plan d’action sur 7 jours",
+      weeklyIntro: "Transformez votre idée en actions quotidiennes simples.",
+      weeklyButton: "Créer mon plan sur 7 jours",
+      weeklyResult: "Votre plan de la semaine"
+    },
+    
+    ar: {
+      title: "اكتشف آفاقاً جديدة",
+      intro: "اكتشف مهارات ومسارات مهنية وأفكار مشاريع تناسب حياتك.",
+      goal: "ماذا تريد أن تستكشف؟",
+      goals: ["تعلّم مهارة جديدة", "استكشاف فكرة مشروع", "تطوير مساري المهني", "تطوير نفسي"],
+      time: "كم من الوقت لديك يومياً؟",
+      times: ["15 دقيقة", "30 دقيقة", "ساعة واحدة", "ساعتان أو أكثر"],
+      budget: "ما الميزانية المتاحة لديك؟",
+      budgets: ["دون ميزانية", "ميزانية صغيرة", "ميزانية مرنة"],
+      level: "ما مستواك الحالي؟",
+      levels: ["مبتدئ", "متوسط", "متقدم"],
+      button: "اكتشف الخيارات المناسبة ←",
+      weeklyTitle: "خطة العمل لمدة 7 أيام",
+      weeklyIntro: "حوّل فكرتك إلى خطوات يومية بسيطة.",
+      weeklyButton: "أنشئ خطتي للأيام السبعة",
+      weeklyResult: "خطتك لهذا الأسبوع"
+    }
+  };
+
+  const d = discoverTranslations[lang] || discoverTranslations.en;
+
+  $("discoverTitle").textContent = d.title;
+  $("discoverIntro").textContent = d.intro;
+  $("goalLabel").textContent = d.goal;
+  $("timeLabel").textContent = d.time;
+  $("budgetLabel").textContent = d.budget;
+  $("discoverButton").textContent = d.button;
+  $("weeklyPlanTitle").textContent = d.weeklyTitle;
+  $("weeklyPlanIntro").textContent = d.weeklyIntro;
+  $("createWeeklyPlan").textContent = d.weeklyButton;
+  $("weeklyPlanResultTitle").textContent = d.weeklyResult;
+  $("weeklyProgress").textContent =
+  lang === "ar" ? "التقدم: 0/7 مهام مكتملة"
+  : lang === "fr" ? "Progression : 0/7 tâches terminées"
+  : "Progress: 0/7 tasks completed";
+  $("saveWeeklyPlan").textContent =
+  lang === "ar" ? "احفظ خطتي"
+  : lang === "fr" ? "Enregistrer mon plan"
+  : "Save my plan";
+
+$("deleteWeeklyPlan").textContent =
+  lang === "ar" ? "حذف الخطة المحفوظة"
+  : lang === "fr" ? "Supprimer le plan enregistré"
+  : "Delete saved plan";
+
+  const goalSelect = $("discoverGoal");
+  const timeSelect = $("discoverTime");
+  const budgetSelect = $("discoverBudget");
+  $("levelLabel").textContent = d.level;
+  const levelSelect = $("discoverLevel");
+  
+  d.levels.forEach((label, i) => {
+  levelSelect.options[i].textContent = label;
+});
+
+  d.goals.forEach((label, i) => {
+    goalSelect.options[i].textContent = label;
+  });
+
+  d.times.forEach((label, i) => {
+    timeSelect.options[i].textContent = label;
+  });
+
+  d.budgets.forEach((label, i) => {
+    budgetSelect.options[i].textContent = label;
+  });
+
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+  $("answer").textContent = "";
+  $("result").hidden = true;
+}
+ 
+function getCategory(text) {
+  const s = text.toLowerCase();
+
+  if (/language|french|english|arabic|vocabulary|pronunciation|translate|translation|grammar|langue|français|francais|anglais|arabe|prononciation|traduction|grammaire|تعلم الفرنسية|تعلم الانجليزية|تعلم الإنجليزية|تعلم العربية|لغة|فرنسية|إنجليزية|عربية|ترجمة|نطق|قواعد اللغة/.test(s)) {
+  return "language";
+  }
+  
+  if (/job|career|interview|resume|résumé|cv|emploi|entretien|travail|recruit|job search|وظيفة|عمل|مقابلة|سيرة ذاتية|توظيف|البحث عن عمل|مهنة/.test(s)) {
+    return "career";
+  }
+  
+  if (/time|schedule|organize|organise|daily routine|productivity|deadline|temps|horaire|organiser|journée|planning|وقت|تنظيم|جدول|يومي|الإنتاجية|إدارة الوقت/.test(s)) {
+    return "time";
+  }
+
+  if (/money|save|saving|budget|spend|expense|income|debt|salary|argent|économ|budget|dépense|revenu|salaire|مال|ادخار|توفير|مصروف|ميزانية|راتب|دخل|ديون/.test(s)) {
+    return "money";
+  }
+
+  if (/study|studying|exam|homework|revision|revise|school|university|étud|examen|devoir|révision|école|دراس|امتحان|واجب|مراجعة|مدرسة|جامعة/.test(s)) {
+    return "study";
+  }
+
+  if (/job|career|interview|resume|résumé|cv|emploi|entretien|travail|recruit|job search|وظيفة|عمل|مقابلة|سيرة ذاتية|توظيف|البحث عن عمل|مهنة/.test(s)) {
+    return "career";
+  }
+
+  if (/computer|phone|wifi|wi-fi|internet|browser|error|bug|app|application|software|website|ordinateur|téléphone|réseau|erreur|logiciel|site web|حاسوب|كمبيوتر|هاتف|واي فاي|إنترنت|مشكلة تقنية|خطأ|تطبيق|موقع إلكتروني/.test(s)) {
+    return "tech";
+  }
+
+  return "general";
+}
+
+const extraAnswers = {
+  en: {
+    career: "1. Identify the role and its main requirements.\n2. Prepare three examples of your skills or achievements.\n3. Practise answering common interview questions aloud.\n4. Prepare two questions to ask the employer.",
+    tech: "1. Describe the problem and note any error message.\n2. Check whether the issue affects one app or the whole device.\n3. Turn the connection off and on; if needed, restart the affected app.\n4. If the issue continues, tell me your device, the error and what you already tried.",
+    language: "1. Choose five useful words or phrases for your goal.\n2. Learn these French words: Bonjour (hello), Merci (thank you), Aujourd'hui (today), Besoin (need), and Comprendre (to understand).\n3. Practise: Bonjour ! Merci beaucoup. J'ai besoin d'aide. (Hello! Thank you very much. I need help.)\n4. Write two sentences about your daily life using the new words.\n5. Say them aloud and review them tomorrow."
+  },
+  fr: {
+    career: "1. Identifiez le poste et ses exigences principales.\n2. Préparez trois exemples de vos compétences ou réussites.\n3. Entraînez-vous à répondre aux questions d'entretien.\n4. Préparez deux questions à poser au recruteur.",
+    tech: "1. Décrivez le problème et le message d'erreur exact.\n2. Vérifiez la connexion, les paramètres et les mises à jour.\n3. Redémarrez l'application ou l'appareil si cela ne présente aucun risque.\n4. Si le problème persiste, notez l'erreur pour obtenir une aide ciblée.",
+    language: "1. Choisissez cinq mots ou expressions utiles à votre objectif.\n2. Apprenez ces mots français : Bonjour (hello), Merci (thank you), Aujourd'hui (today), Besoin (need) et Comprendre (to understand).\n3. Entraînez-vous : Bonjour ! Merci beaucoup. J'ai besoin d'aide. (Hello! Thank you very much. I need help.)\n4. Écrivez deux phrases sur votre quotidien en utilisant ces mots.\n5. Dites-les à voix haute et révisez-les demain."
+  },
+  ar: {
+    career: "١. حدّد الوظيفة ومتطلباتها الأساسية.\n٢. حضّر ثلاثة أمثلة على مهاراتك أو إنجازاتك.\n٣. تدرّب على الإجابة عن أسئلة مقابلات العمل الشائعة.\n٤. حضّر سؤالين لطرحهما على مسؤول التوظيف.",
+    tech: "١. صف المشكلة بدقة واكتب رسالة الخطأ إن وجدت.\n٢. تحقّق من الاتصال والإعدادات والتحديثات المتاحة.\n٣. أعد تشغيل التطبيق أو الجهاز إذا كان ذلك آمناً.\n٤. إذا استمرت المشكلة، سجّل رسالة الخطأ لطلب مساعدة محددة.",
+    language: "١. اختر خمس كلمات أو عبارات مفيدة.\n٢. استمع إلى نطقها وكرّرها بصوت مرتفع.\n٣. اكتب ثلاث جمل قصيرة باستخدامها.\n٤. راجعها غداً."
+  }
+};
+
+function solveProblem() {
+  const t = translations[currentLanguage];
+  const problem = $("problem").value.trim();
+  if (!problem) {
+    $("result").hidden = false;
+    $("answer").textContent = t.empty;
+    return;
+  }
+  const category = getCategory(problem);
+  saveHistory(problem);
+  
+
+const answers = {
+  time: t.timeAnswer,
+  money: t.moneyAnswer,
+  study: t.studyAnswer,
+  general: t.general,
+  ...extraAnswers[currentLanguage]
+};
+
+$("result").hidden = false;
+$("answer").textContent = answers[category];
+}
+
+$("language").addEventListener("change", e => setLanguage(e.target.value));
+$("solve").addEventListener("click", solveProblem);
+
+document.querySelectorAll("[data-example]").forEach(button => {
+  button.addEventListener("click", () => {
+    const examples = {
+      time: {en:"Help me organize my day.",fr:"Aidez-moi à organiser ma journée.",ar:"ساعدني في تنظيم يومي."},
+      money: {en:"How can I save money?",fr:"Comment puis-je économiser de l'argent ?",ar:"كيف يمكنني توفير المال؟"},
+      study: {en:"Help me study better.",fr:"Aidez-moi à mieux étudier.",ar:"ساعدني على الدراسة بشكل أفضل."}
+    };
+    $("problem").value = examples[button.dataset.example][currentLanguage];
+    solveProblem();
+  });
+});
+  
+function loadSavedWeeklyPlan() {
+  try {
+    const savedPlan = localStorage.getItem("dailyfix_weekly_plan");
+
+    if (!savedPlan) return;
+
+    const items = JSON.parse(savedPlan);
+
+    if (!Array.isArray(items) || items.length === 0) return;
+
+    const list = document.getElementById("weeklyPlanList");
+    list.replaceChildren();
+
+    items.forEach(text => {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    });
+
+    document.getElementById("weeklyPlanResult").hidden = false;
+  } catch (error) {
+    console.error("Could not load the saved weekly plan.", error);
+  }
+}
+
+loadSavedWeeklyPlan();
+
+setLanguage(currentLanguage);
+
+const discoverContent = {
+  en: {
+    skills: [
+      ["Learn basic design", "Create one simple social media post each day using free tools."],
+      ["Improve your English", "Learn five useful words and write three sentences daily."],
+      ["Learn web development", "Practise HTML and CSS by building one small page at a time."]
+    ],
+    business: [
+      ["Offer a small service", "Choose one skill and create two sample works to show potential customers."],
+      ["Create a digital product", "Make a useful checklist or planner with free design tools."],
+      ["Test a local business idea", "Ask three potential customers what problem they need solved before spending money."]
+    ],
+    career: [
+      ["Improve your CV", "Update your skills and achievements, then prepare a clear one-page CV."],
+      ["Build a portfolio", "Create two examples that demonstrate what you can do."],
+      ["Practise interviews", "Prepare answers to three common interview questions."]
+    ],
+    personal: [
+      ["Build a daily routine", "Choose one useful 15-minute habit and practise it every day."],
+      ["Read and learn", "Read a few pages daily and write down one thing you learned."],
+      ["Set a weekly goal", "Choose one realistic goal and split it into small daily actions."]
+    ]
+  },
+  fr: {
+    skills: [
+      ["Apprendre le design", "Créez chaque jour une publication simple avec des outils gratuits."],
+      ["Améliorer votre anglais", "Apprenez cinq mots utiles et écrivez trois phrases par jour."],
+      ["Apprendre le développement web", "Pratiquez HTML et CSS en créant de petites pages."]
+    ],
+    business: [
+      ["Proposer un petit service", "Choisissez une compétence et créez deux exemples à montrer aux clients."],
+      ["Créer un produit numérique", "Concevez une checklist ou un planner avec des outils gratuits."],
+      ["Tester une idée locale", "Interrogez trois clients potentiels avant de dépenser de l'argent."]
+    ],
+    career: [
+      ["Améliorer votre CV", "Mettez à jour vos compétences et préparez un CV clair d'une page."],
+      ["Créer un portfolio", "Préparez deux exemples qui montrent vos compétences."],
+      ["Préparer un entretien", "Préparez des réponses à trois questions fréquentes."]
+    ],
+    personal: [
+      ["Créer une routine", "Choisissez une habitude utile de 15 minutes par jour."],
+      ["Lire et apprendre", "Lisez quelques pages et notez une chose apprise."],
+      ["Définir un objectif", "Choisissez un objectif réaliste et divisez-le en petites actions."]
+    ]
+  },
+  ar: {
+    skills: [
+      ["تعلّم التصميم", "أنشئ كل يوم منشوراً بسيطاً لوسائل التواصل باستخدام أدوات مجانية."],
+      ["طوّر لغتك الإنجليزية", "تعلّم خمس كلمات مفيدة واكتب ثلاث جمل يومياً."],
+      ["تعلّم تطوير الويب", "تدرّب على HTML وCSS بإنشاء صفحات صغيرة تدريجياً."]
+    ],
+    business: [
+      ["قدّم خدمة بسيطة", "اختر مهارة وأنشئ نموذجين من عملك لعرضهما على العملاء المحتملين."],
+      ["أنشئ منتجاً رقمياً", "صمّم قائمة تحقق أو مخططاً مفيداً بأدوات مجانية."],
+      ["اختبر فكرة مشروع محلي", "اسأل ثلاثة عملاء محتملين عمّا يحتاجون إليه قبل إنفاق المال."]
+    ],
+    career: [
+      ["حسّن سيرتك الذاتية", "حدّث مهاراتك وإنجازاتك وجهّز سيرة ذاتية واضحة من صفحة واحدة."],
+      ["أنشئ معرض أعمال", "جهّز نموذجين يوضحان ما تستطيع إنجازه."],
+      ["تدرّب على المقابلات", "حضّر إجابات لثلاثة أسئلة شائعة في مقابلات العمل."]
+    ],
+    personal: [
+      ["أنشئ روتيناً يومياً", "اختر عادة مفيدة مدتها ١٥ دقيقة والتزم بها يومياً."],
+      ["اقرأ وتعلّم", "اقرأ بضع صفحات يومياً وسجّل معلومة جديدة تعلمتها."],
+      ["حدّد هدفاً أسبوعياً", "اختر هدفاً واقعياً وقسّمه إلى خطوات يومية صغيرة."]
+    ]
+  }
+};
+
+const discoverButton = document.getElementById("discoverButton");
+
+discoverButton.addEventListener("click", () => {
+  const lang = translations[currentLanguage] ? currentLanguage : "en";
+  const goal = document.getElementById("discoverGoal").value;
+  const level = document.getElementById("discoverLevel").value;
+  const time = Number(document.getElementById("discoverTime").value);
+  const budget = document.getElementById("discoverBudget").value;
+  const result = document.getElementById("discoverResult");
+  const answer = document.getElementById("discoverAnswer");
+  const title = document.getElementById("discoverResultTitle");
+
+  const headings = {
+    en: "Your opportunities",
+    fr: "Vos possibilités",
+    ar: "الفرص المناسبة لك"
+  };
+
+  title.textContent = headings[lang];
+
+  const options = discoverContent[lang][goal];
+  let levelAdvice = "";
+  if (level === "beginner") {
+  levelAdvice = lang === "ar"
+    ? "نصيحة للمبتدئ: ابدأ بخطوة صغيرة، وتعلّم الأساسيات قبل الانتقال إلى الأمور المتقدمة."
+    : lang === "fr"
+    ? "Conseil débutant : commencez par une petite étape et apprenez les bases avant de passer aux notions avancées."
+    : "Beginner tip: start with one small step and learn the basics before moving to advanced topics.";
+  }
+  if (level === "intermediate") {
+  levelAdvice = lang === "ar"
+    ? "نصيحة للمستوى المتوسط: طبّق ما تعلمته على مشروع صغير، وحدد مهارة واحدة لتحسينها."
+    : lang === "fr"
+    ? "Conseil intermédiaire : appliquez vos connaissances à un petit projet et choisissez une compétence à améliorer."
+    : "Intermediate tip: apply what you know to a small project and choose one skill to improve.";
+  }
+  if (level === "advanced") {
+  levelAdvice = lang === "ar"
+    ? "نصيحة للمستوى المتقدم: نفّذ مشروعًا متكاملًا، واختبر أفكارك، وشارك نتائجك مع الآخرين."
+    : lang === "fr"
+    ? "Conseil avancé : réalisez un projet complet, testez vos idées et partagez vos résultats."
+    : "Advanced tip: build a complete project, test your ideas, and share your results with others.";
+  }
+
+  let advice = "";
+  if (lang === "ar") {
+    advice = `الوقت المتاح: ${time} دقيقة يومياً.\n`;
+    advice += budget === "zero"
+      ? "الميزانية: ابدأ بأدوات مجانية ولا تنفق المال الآن.\n\n"
+      : budget === "low"
+      ? "الميزانية: اختبر الفكرة بأقل تكلفة ممكنة أولاً.\n\n"
+      : "الميزانية: حدّد تكلفة واضحة ولا تنفق قبل اختبار الفكرة.\n\n";
+  } else if (lang === "fr") {
+    advice = `Temps disponible : ${time} minutes par jour.\n`;
+    advice += budget === "zero"
+      ? "Budget : commencez avec des outils gratuits.\n\n"
+      : budget === "low"
+      ? "Budget : testez d'abord avec un coût minimal.\n\n"
+      : "Budget : fixez une limite et testez avant d'investir.\n\n";
+  } else {
+    advice = `Available time: ${time} minutes per day.\n`;
+    advice += budget === "zero"
+      ? "Budget: start with free tools and spend nothing for now.\n\n"
+      : budget === "low"
+      ? "Budget: test the idea at the lowest possible cost first.\n\n"
+      : "Budget: set a limit and test before investing.\n\n";
+  }
+
+  options.forEach((option, index) => {
+    advice += `${index + 1}. ${option[0]}\n${option[1]}\n\n`;
+  });
+
+  if (lang === "ar") {
+    advice += "خطوتك التالية: اختر فكرة واحدة وجرّبها لمدة أسبوع، ثم قيّم النتيجة.";
+  } else if (lang === "fr") {
+    advice += "Prochaine étape : choisissez une idée, testez-la pendant une semaine, puis évaluez le résultat.";
+  } else {
+    advice += "Next step: choose one idea, test it for a week, then review the results.";
+  }
+
+  answer.textContent = advice + "\n\n" + levelAdvice;
+  result.hidden = false;
+});
+  
+document.getElementById("createWeeklyPlan").addEventListener("click", () => {
+  const lang = translations[currentLanguage] ? currentLanguage : "en";
+  const goal = document.getElementById("discoverGoal").value;
+  localStorage.removeItem("dailyfix_weekly_progress");
+  const level = document.getElementById("discoverLevel").value;
+  const time = Number(document.getElementById("discoverTime").value);
+  const budget = document.getElementById("discoverBudget").value;
+
+  const plans = {
+    en: {
+      skills: [
+        "Choose one useful skill and define your goal.",
+        "Find one free lesson and study the basics.",
+        "Practice for the selected daily time.",
+        "Repeat the hardest exercise.",
+        "Create a small example using your skill.",
+        "Improve your example and note what you learned.",
+        "Review your progress and choose your next goal."
+      ],
+      business: [
+        "Choose one simple business idea.",
+        "Identify who might need your product or service.",
+        "Study three similar offers using free resources.",
+        "Create a basic sample of your offer.",
+        "Ask a few people for honest feedback.",
+        "Improve your offer based on their feedback.",
+        "Write your next steps without spending money unnecessarily."
+      ],
+      career: [
+        "Choose one job or career goal.",
+        "Review the skills required for that goal.",
+        "Improve one section of your CV.",
+        "Practice answering a common interview question.",
+        "Find suitable opportunities using free resources.",
+        "Prepare one tailored application.",
+        "Review your progress and plan your next applications."
+      ],
+      personal: [
+        "Choose one personal goal for this week.",
+        "Break it into a small, achievable task.",
+        "Complete the task and record your progress.",
+        "Identify one obstacle and a way around it.",
+        "Repeat the habit for your chosen daily time.",
+        "Review what helped you stay consistent.",
+        "Evaluate your progress and set your next small goal."
+      ]
+    },
+    fr: {
+      skills: [
+        "Choisissez une compétence utile et définissez votre objectif.",
+        "Trouvez un cours gratuit et apprenez les bases.",
+        "Pratiquez pendant le temps quotidien choisi.",
+        "Refaites l’exercice le plus difficile.",
+        "Créez un petit exemple avec votre compétence.",
+        "Améliorez votre exemple et notez vos apprentissages.",
+        "Évaluez vos progrès et choisissez le prochain objectif."
+      ],
+      business: [
+        "Choisissez une idée commerciale simple.",
+        "Identifiez les personnes qui pourraient avoir besoin de votre offre.",
+        "Étudiez trois offres similaires avec des ressources gratuites.",
+        "Créez un exemple simple de votre offre.",
+        "Demandez un avis honnête à quelques personnes.",
+        "Améliorez votre offre selon les retours reçus.",
+        "Notez les prochaines étapes sans dépenses inutiles."
+      ],
+      career: [
+        "Choisissez un objectif professionnel.",
+        "Repérez les compétences nécessaires.",
+        "Améliorez une partie de votre CV.",
+        "Entraînez-vous à répondre à une question d’entretien.",
+        "Recherchez des opportunités avec des ressources gratuites.",
+        "Préparez une candidature adaptée.",
+        "Évaluez vos progrès et planifiez vos prochaines candidatures."
+      ],
+      personal: [
+        "Choisissez un objectif personnel pour la semaine.",
+        "Divisez-le en une petite tâche réalisable.",
+        "Réalisez la tâche et notez vos progrès.",
+        "Repérez un obstacle et une solution possible.",
+        "Répétez votre habitude pendant le temps choisi.",
+        "Identifiez ce qui vous a aidé à rester régulier.",
+        "Évaluez vos progrès et fixez un nouvel objectif."
+      ]
+    },
+    ar: {
+      skills: [
+        "اختر مهارة مفيدة وحدد هدفك منها.",
+        "ابحث عن درس مجاني وتعلّم الأساسيات.",
+        "تدرّب وفق الوقت اليومي الذي اخترته.",
+        "أعد التمرين الذي وجدته الأصعب.",
+        "أنشئ مثالًا صغيرًا تطبّق فيه المهارة.",
+        "حسّن المثال وسجّل ما تعلمته.",
+        "قيّم تقدمك وحدد هدفك التالي."
+      ],
+      business: [
+        "اختر فكرة مشروع بسيطة.",
+        "حدد الأشخاص الذين قد يحتاجون إلى منتجك أو خدمتك.",
+        "ادرس ثلاثة عروض مشابهة باستخدام مصادر مجانية.",
+        "أنشئ نموذجًا بسيطًا لما ستقدمه.",
+        "اطلب رأي بعض الأشخاص بصراحة.",
+        "حسّن عرضك بناءً على الملاحظات.",
+        "اكتب خطواتك القادمة دون إنفاق غير ضروري."
+      ],
+      career: [
+        "حدد هدفًا مهنيًا أو وظيفة تسعى إليها.",
+        "تعرف على المهارات المطلوبة لتحقيق هدفك.",
+        "حسّن جزءًا واحدًا من سيرتك الذاتية.",
+        "تدرّب على إجابة سؤال شائع في مقابلات العمل.",
+        "ابحث عن فرص مناسبة باستخدام مصادر مجانية.",
+        "جهّز طلب توظيف يناسب إحدى الفرص.",
+        "قيّم تقدمك وخطط لطلبات التوظيف القادمة."
+      ],
+      personal: [
+        "اختر هدفًا شخصيًا لهذا الأسبوع.",
+        "قسّمه إلى مهمة صغيرة قابلة للإنجاز.",
+        "أنجز المهمة وسجّل تقدمك.",
+        "حدد عقبة تواجهك وفكر في حل لها.",
+        "كرر العادة وفق الوقت اليومي الذي اخترته.",
+        "راجع ما ساعدك على الاستمرار.",
+        "قيّم تقدمك وحدد هدفًا صغيرًا جديدًا."
+      ]
+    }
+  };
+
+  const dayNames = {
+    en: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+    fr: ["Jour 1", "Jour 2", "Jour 3", "Jour 4", "Jour 5", "Jour 6", "Jour 7"],
+    ar: ["اليوم الأول", "اليوم الثاني", "اليوم الثالث", "اليوم الرابع", "اليوم الخامس", "اليوم السادس", "اليوم السابع"]
+  };
+
+  const notes = {
+    en: `Daily time: ${time} minutes. Budget: ${budget === "zero" ? "free tools only" : budget === "low" ? "keep costs low" : "set a clear spending limit"}. Level: ${level}.`,
+    fr: `Temps quotidien : ${time} minutes. Budget : ${budget === "zero" ? "outils gratuits uniquement" : budget === "low" ? "limiter les coûts" : "fixer une limite claire"}. Niveau : ${level}.`,
+    ar: `الوقت اليومي: ${time} دقيقة. الميزانية: ${budget === "zero" ? "أدوات مجانية فقط" : budget === "low" ? "تقليل التكاليف" : "تحديد سقف واضح للإنفاق"}. المستوى: ${level === "beginner" ? "مبتدئ" : level === "intermediate" ? "متوسط" : "متقدم"}.`
+  };
+
+  const tasks = plans[lang][goal];
+  const list = document.getElementById("weeklyPlanList");
+  list.replaceChildren();
+
+  tasks.forEach((task, index) => {
+  const item = document.createElement("li");
+  const checkbox = document.createElement("input");
+  const label = document.createElement("label");
+
+  checkbox.type = "checkbox";
+  const savedProgress = JSON.parse(
+  localStorage.getItem("dailyfix_weekly_progress") || "[]"
+);
+
+checkbox.checked = savedProgress[index] === true;
+  checkbox.addEventListener("change", () => {
+  const completed = document.querySelectorAll(
+    "#weeklyPlanList .weekly-task-checkbox:checked"
+  ).length;
+
+  const total = document.querySelectorAll(
+    "#weeklyPlanList .weekly-task-checkbox"
+  ).length;
+
+  document.getElementById("weeklyProgress").textContent =
+    lang === "ar"
+      ? `التقدم: ${completed}/${total} مهام مكتملة`
+      : lang === "fr"
+      ? `Progression : ${completed}/${total} tâches terminées`
+      : `Progress: ${completed}/${total} tasks completed`;
+    const progress = Array.from(
+  document.querySelectorAll("#weeklyPlanList .weekly-task-checkbox")
+).map(box => box.checked);
+
+localStorage.setItem(
+  "dailyfix_weekly_progress",
+  JSON.stringify(progress)
+);
+});
+  checkbox.className = "weekly-task-checkbox";
+
+  label.textContent = `${dayNames[lang][index]}: ${task}`;
+  label.style.marginLeft = "8px";
+
+  item.appendChild(checkbox);
+  item.appendChild(label);
+  list.appendChild(item);
+});
+  
+  const note = document.createElement("li");
+  note.textContent = notes[lang];
+  list.appendChild(note);
+const completed = document.querySelectorAll(
+  "#weeklyPlanList .weekly-task-checkbox:checked"
+).length;
+
+const total = document.querySelectorAll(
+  "#weeklyPlanList .weekly-task-checkbox"
+).length;
+
+document.getElementById("weeklyProgress").textContent =
+  lang === "ar"
+    ? `التقدم: ${completed}/${total} مهام مكتملة`
+    : lang === "fr"
+    ? `Progression : ${completed}/${total} tâches terminées`
+    : `Progress: ${completed}/${total} tasks completed`;
+  document.getElementById("weeklyPlanResult").hidden = false;
+});
+  
+document.getElementById("saveWeeklyPlan").addEventListener("click", () => {
+  const items = Array.from(
+    document.querySelectorAll("#weeklyPlanList li")
+  ).map(item => item.textContent);
+
+  if (items.length === 0) {
+    alert(
+      currentLanguage === "ar"
+        ? "أنشئ خطتك الأسبوعية أولاً."
+        : currentLanguage === "fr"
+        ? "Créez d'abord votre plan hebdomadaire."
+        : "Create your weekly plan first."
+    );
+    return;
+  }
+
+  try {
+    localStorage.setItem("dailyfix_weekly_plan", JSON.stringify(items));
+
+    alert(
+      currentLanguage === "ar"
+        ? "تم حفظ خطتك بنجاح!"
+        : currentLanguage === "fr"
+        ? "Votre plan a été enregistré !"
+        : "Your plan has been saved!"
+    );
+  } catch (error) {
+    alert(
+      currentLanguage === "ar"
+        ? "تعذر حفظ الخطة على هذا الجهاز."
+        : currentLanguage === "fr"
+        ? "Impossible d'enregistrer le plan sur cet appareil."
+        : "Could not save the plan on this device."
+    );
+  }
+});
+
+document.getElementById("deleteWeeklyPlan").addEventListener("click", () => {
+  const lang = translations[currentLanguage] ? currentLanguage : "en";
+
+  const confirmMessage = {
+    en: "Are you sure you want to delete your saved plan?",
+    fr: "Voulez-vous vraiment supprimer votre plan enregistré ?",
+    ar: "هل أنت متأكد أنك تريد حذف خطتك المحفوظة؟"
+  };
+
+  const successMessage = {
+    en: "Your saved plan has been deleted.",
+    fr: "Votre plan enregistré a été supprimé.",
+    ar: "تم حذف خطتك المحفوظة."
+  };
+
+  if (!confirm(confirmMessage[lang])) return;
+
+  localStorage.removeItem("dailyfix_weekly_plan");
+  document.getElementById("weeklyPlanList").replaceChildren();
+  document.getElementById("weeklyPlanResult").hidden = true;
+
+  alert(successMessage[lang]);
+});
+document.getElementById("clearWeeklyPlanView").addEventListener("click", () => {
+  const lang = translations[currentLanguage] ? currentLanguage : "en";
+
+  const messages = {
+    en: "The plan was cleared from the screen. Your saved plan is still available.",
+    fr: "Le plan a été effacé de l'écran. Votre plan enregistré est toujours disponible.",
+    ar: "تم مسح الخطة من الشاشة. ما زالت نسختك المحفوظة متاحة."
+  };
+
+  document.getElementById("weeklyPlanList").replaceChildren();
+  document.getElementById("weeklyPlanResult").hidden = true;
+
+  alert(messages[lang]);
+});
+
+</script>
+</body>
+</html>
